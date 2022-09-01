@@ -182,6 +182,26 @@ def gen_diag_core_tensor(rank, n_dims, diags=1):
 
 
 
+def show_decomposition_error(sigma_array, norm_t,   title='', start=1, end=None, version=2, show=True):
+    if end is None:
+        end = len(sigma_array)
+        
+    if version == 1:
+        plt.plot((np.cumsum((sigma_array[::-1]/norm_t)**2)[::-1])[start:end])
+    elif version == 2:
+        plt.plot((1 - np.cumsum((sigma_array/norm_t)**2))[start-1:end])
+    else:
+        print('Bad verion!')
+        return
+    plt.title(title)
+    plt.grid()
+    plt.gcf().set_size_inches((16, 2))
+    if show:
+        plt.show()
+    return 
+
+
+
         
         
     
