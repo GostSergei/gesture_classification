@@ -202,6 +202,20 @@ def show_decomposition_error(sigma_array, norm_t,   title='', start=1, end=None,
 
 
 
+def recover_svd(u_s_v, rank=None):
+    u, s, v = u_s_v
+    if rank is None:
+        rank = len(s)
+    if len(s) < rank:
+        print(f"Worning! Rank [{rank}] is more then len(sigmas) [{len(s)}]!")
+        rank = len(s)
+        
+    recover_mat = np.matmul(u[:, :rank], np.diag(s[:rank]))
+    recover_mat = np.matmul(recover_mat, v[:rank, :])
+    return recover_mat
+
+
+
         
         
     
