@@ -20,15 +20,23 @@ def plot_confusion_matrix(y_test, label, label_dict, ax=None):
     #                             target_names=[l for l in label_dict.values()]))
 
     conf_mat = confusion_matrix(label, y_test)
+    
+    labels_number = len(label_dict.keys())
+    
+    k_size = labels_number // 22
+    
+    # print(k_size)
 
     if ax is None:
-        fig = plt.figure(figsize=(6,6))
-        ax = fig.add_axes([0, 0, 0.8,  0.8])
+        fig = plt.figure(figsize=(6*k_size,6*k_size))
+        ax = fig.add_axes([0, 0, 0.8*k_size,  0.8*k_size])
     else:
         fig = ax.get_figure()
 
     width = np.shape(conf_mat)[1]
     height = np.shape(conf_mat)[0]
+    
+    
 
     res = ax.imshow(np.array(conf_mat), cmap=plt.cm.summer, interpolation='nearest')
     for i, row in enumerate(conf_mat):
@@ -39,17 +47,18 @@ def plot_confusion_matrix(y_test, label, label_dict, ax=None):
     # cb = fig.colorbar(res)
     cb = plt.colorbar(res, ax=ax)
     ax.set_title('Confusion Matrix')
-    _ = ax.set_xticks(range(22), [l for l in label_dict.values()], rotation=90)
-    _ = ax.set_yticks(range(22), [l for l in label_dict.values()])
+    _ = ax.set_xticks(range(labels_number), [l for l in label_dict.values()], rotation=90)
+    _ = ax.set_yticks(range(labels_number), [l for l in label_dict.values()])
     
 def print_classification_report(y_test, label, label_dict):
     print(classification_report(label, y_test,
                                 target_names=[l for l in label_dict.values()]))
     
     
-def compare_train_test_confusion_matrices(y_train, label_train, y_test, label_test, label_dict, fig_size=[14, 6]):
+def compare_train_test_confusion_matrices(y_train, label_train, y_test, label_test, label_dict, fig_size=[14*2, 6*2]):
     fig, (ax_train, ax_test) = plt.subplots(1, 2)
     fig.set_size_inches(fig_size)
+    
     
     plot_confusion_matrix(y_train, label_train, label_dict, ax=ax_train)
     acc_train = accuracy_score(y_train, label_train)
