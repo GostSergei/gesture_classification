@@ -2,8 +2,15 @@
 import copy
 
 import tensorly as tl
+from tensorly import random
+from tensorly.decomposition import tucker, parafac, partial_tucker
+from tensorly.tenalg import mode_dot, multi_mode_dot
 # from dataset_auxiliary import *
 from modules.dataset_auxiliary import *
+
+
+
+
 
 
 def select_valid_samplels(ds_dict):
@@ -183,6 +190,7 @@ def gen_diag_core_tensor(rank, n_dims, diags=1):
 
 
 def show_decomposition_error(sigma_array, norm_t,   title='', start=1, end=None, version=2, show=True):
+
     if end is None:
         end = len(sigma_array)
         
@@ -213,6 +221,32 @@ def recover_svd(u_s_v, rank=None):
     recover_mat = np.matmul(u[:, :rank], np.diag(s[:rank]))
     recover_mat = np.matmul(recover_mat, v[:rank, :])
     return recover_mat
+
+
+def get_tucker_tensors(data_tensor, data_tensor_test, rank=-1, n_iter_max=1000, verbose=2):
+    t = data_tensor
+    tt = data_tensor_test
+    
+    if rank is None or rank == -1:
+        rank = data_tensor.shape[1:]
+        
+    if verbose > 1:
+        print(f"Decomposition with rank: {rank}. tensor shape: {data_tensor.shape}")
+        
+    modes = [i for i in range(len(data_tensor.shape))]
+    modes = modes[1:]
+    core_tucker, factors_tucker = partial_tucker(t, modes, rank=rank, n_iter_max=n_iter_max)
+    
+    if verbose > 0:
+        t_rec_tucker = tl.tucker_to_tensor((core_tucker, [None] + factors_tucker), skip_factor=0)
+        print(f"Tucker: Rank: {rank }, rel_error: {tl.norm(t - t_rec_tucker)/tl.norm(t): .5f} ; norm origin: {tl.norm(t)} ; norm recovered: {tl.norm(t_rec_tucker)}")
+            
+    factors = factors_tucker
+    factors = [None] + factors
+    tensor_tucker = multi_mode_dot(t, [matrix.T for matrix in factors[1:]], modes=modes)
+    tensor_tucker_test = multi_mode_dot(tt, [matrix.T for matrix in factors[1:]], modes=modes)
+        
+    return tensor_tucker, tensor_tucker_test
 
 
 

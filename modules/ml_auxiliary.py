@@ -19,7 +19,7 @@ def plot_confusion_matrix(y_test, label, label_dict, ax=None):
     # print(classification_report(label, y_test,
     #                             target_names=[l for l in label_dict.values()]))
 
-    conf_mat = confusion_matrix(label, y_test)
+    conf_mat = confusion_matrix(y_test, label)
     
     labels_number = len(label_dict.keys())
     
@@ -29,7 +29,7 @@ def plot_confusion_matrix(y_test, label, label_dict, ax=None):
 
     if ax is None:
         fig = plt.figure(figsize=(6*k_size,6*k_size))
-        ax = fig.add_axes([0, 0, 0.8*k_size,  0.8*k_size])
+        ax = fig.add_axes([0, 0, 0.8,  0.8])
     else:
         fig = ax.get_figure()
 
