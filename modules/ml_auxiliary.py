@@ -15,7 +15,7 @@ def make_X_y(tensor, labels_list):
     y = np.array(labels_list)
     return X, y
 
-def plot_confusion_matrix(y_test, label, label_dict, ax=None):
+def plot_confusion_matrix(y_test, label, label_dict, ax=None, size=(6, 6)):
     # print(classification_report(label, y_test,
     #                             target_names=[l for l in label_dict.values()]))
 
@@ -28,8 +28,9 @@ def plot_confusion_matrix(y_test, label, label_dict, ax=None):
     # print(k_size)
 
     if ax is None:
-        fig = plt.figure(figsize=(6*k_size,6*k_size))
-        ax = fig.add_axes([0, 0, 0.8,  0.8])
+        fig = plt.figure(figsize=(size[0]*k_size, size[1]*k_size))
+        # ax = fig.add_axes([0, 0, size[0]/6*0.4,  size[1]/6*0.4])
+        ax = plt
     else:
         fig = ax.get_figure()
 
@@ -37,18 +38,28 @@ def plot_confusion_matrix(y_test, label, label_dict, ax=None):
     height = np.shape(conf_mat)[0]
     
     
-
-    res = ax.imshow(np.array(conf_mat), cmap=plt.cm.summer, interpolation='nearest')
+    conf_mat = np.array(conf_mat)
+    res = ax.imshow(conf_mat, cmap=plt.cm.summer, interpolation='nearest')
+    if ax is plt:
+        ax = plt.gca()
+        
+    total_true = np.diag(conf_mat)/conf_mat.sum(axis=1)
+    
+     
+        
     for i, row in enumerate(conf_mat):
         for j, c in enumerate(row):
             if c>0:
                 ax.text(j-.2, i+.1, c, fontsize=8)
-                
+                ax.text(width-.2, i+.1, f"{100*total_true[i]:.2f}%", fontsize=8)
+                       
     # cb = fig.colorbar(res)
     cb = plt.colorbar(res, ax=ax)
     ax.set_title('Confusion Matrix')
     _ = ax.set_xticks(range(labels_number), [l for l in label_dict.values()], rotation=90)
     _ = ax.set_yticks(range(labels_number), [l for l in label_dict.values()])
+    
+    return conf_mat
     
 def print_classification_report(y_test, label, label_dict):
     print(classification_report(label, y_test,

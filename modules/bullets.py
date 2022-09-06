@@ -62,9 +62,15 @@ def regress(data, dst=None):
     
     # model = LogisticRegression(solver='lbfgs', class_weight='balanced', max_iter=200).fit(x_train, y_train)
     x_test = StandardScaler().fit_transform(x_test)
-    x_train = StandardScaler().fit_transform(x_train)
-    model = LogisticRegression(max_iter=1000).fit(x_train, y_train)
-    y_pred = model.predict(x_train)
+    scaler = StandardScaler()
+    scaler.fit(x_train)
+    x_train = scaler.transform(x_train)
+    x_test = scaler.transform(x_test)
+    
+    # model = LogisticRegression(max_iter=1000).fit(x_train, y_train)
+    model = LogisticRegression(solver='lbfgs', class_weight='balanced', max_iter=1000).fit(x_train, y_train)
+    # y_pred = model.predict(x_train)
+    y_pred = model.predict(x_test)
     
     if dst is not None:
         dst_folder = Path(dst).parent.absolute()
