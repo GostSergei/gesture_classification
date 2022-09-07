@@ -20,6 +20,7 @@ def load_data(src):
     }
     
     
+    
 def tucker_decomposition(src, dst, rank=-1):
     data = load_data(src)
     data_tensor, data_tensor_test = data['x_train'], data['x_test']

@@ -18,6 +18,7 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
+from catboost import CatBoostClassifier
 
 
 import xgboost as xgb
@@ -104,6 +105,7 @@ class ModelAbstract(ABC):
         self.fit_time = (time.time() - t)
         if verbose > 0:
             print(f"{self.fit_time} s passed")
+            
         return self
              
     def predict(self, X):
@@ -130,9 +132,15 @@ class ModelAbstract(ABC):
         acc_array = []
         fit_times = []
         print(f"Modle {self.name} is evaluating... n_trials={n_trials}")
+
+
         for i in tqdm(range(n_trials)): 
-            
-            self.fit(X_train, y_train, verbose=0)
+            if i == 0:
+                if self.fit_time is None:
+                    self.fit(X_train, y_train, verbose=0)
+            else:
+                self.fit(X_train, y_train, verbose=0)
+                
             fit_times += [self.fit_time]    
             pred = self.model.predict(X_test)
             acc = metric_fun(y_test, pred)
@@ -154,7 +162,8 @@ class ModelAbstract(ABC):
     def eval_inference_time(self, X, n_timeit=100):
         
         print(f"Inference time evaluation for mocel {self.name}... n_timeit={n_timeit}")
-        X= self.reshape_X_tensor(X)
+        X = self.reshape_X_tensor(X)
+        
         if self.do_scaler:
             X = self.scaler.transform(X)
             
@@ -179,13 +188,13 @@ class ModelAbstract(ABC):
      
 class LogReg(ModelAbstract):
     def gen_default_params(self):
-        def_params = dict(n_jobs=-1)
+        def_params = dict(n_jobs=8)
         return def_params
         
     def init_model(self):
         self.main_dict[self.NAME_KEY] = 'LogReg'
         self.main_dict[self.DO_SCALER_KEY] = True
-        self.main_dict[self.N_TRIALS_KEY] = 3
+        self.main_dict[self.N_TRIALS_KEY] = 1
                 
         params = self.gen_default_params()
         params_new = self.main_dict[self.PARAMS_KEY]
@@ -197,7 +206,7 @@ class LogReg(ModelAbstract):
   
 class RandForest(ModelAbstract):
     def gen_default_params(self):
-        def_params = dict(n_jobs=-1)
+        def_params = dict(n_jobs=8)
         return def_params
         
     def init_model(self):
@@ -215,13 +224,13 @@ class RandForest(ModelAbstract):
     
 class XGBoost(ModelAbstract):
     def gen_default_params(self):
-        def_params = dict(n_jobs=-1)
+        def_params = dict(n_jobs=8)
         return def_params
         
     def init_model(self):
         self.main_dict[self.NAME_KEY] = 'XGBoost'
         self.main_dict[self.DO_SCALER_KEY] = False
-        self.main_dict[self.N_TRIALS_KEY] = 10
+        self.main_dict[self.N_TRIALS_KEY] = 1
                 
         params = self.gen_default_params()
         params_new = self.main_dict[self.PARAMS_KEY]
@@ -229,6 +238,30 @@ class XGBoost(ModelAbstract):
             params[key] = params_new[key]
         
         return xgb.XGBClassifier(**params)
+    
+    
+class CatBoost(ModelAbstract):
+    def gen_default_params(self):
+        def_params = dict(iterations=15000,
+                          depth=5,
+                          learning_rate=0.1,
+                          loss_function='MultiClass',
+                          verbose=True,
+                          task_type='GPU',
+                          devices='0:1',)
+        return def_params
+        
+    def init_model(self):
+        self.main_dict[self.NAME_KEY] = 'CatBoost'
+        self.main_dict[self.DO_SCALER_KEY] = False
+        self.main_dict[self.N_TRIALS_KEY] = 1
+                
+        params = self.gen_default_params()
+        params_new = self.main_dict[self.PARAMS_KEY]
+        for key in params_new.keys():
+            params[key] = params_new[key]
+        
+        return CatBoostClassifier(**params)
   
     
 class SVMClassifier(ModelAbstract):
@@ -239,7 +272,7 @@ class SVMClassifier(ModelAbstract):
     def init_model(self):
         self.main_dict[self.NAME_KEY] = 'SVMClassifier'
         self.main_dict[self.DO_SCALER_KEY] = True
-        self.main_dict[self.N_TRIALS_KEY] = 10
+        self.main_dict[self.N_TRIALS_KEY] = 1
                 
         params = self.gen_default_params()
         params_new = self.main_dict[self.PARAMS_KEY]
@@ -282,7 +315,7 @@ class STMM(ModelAbstract):
     def init_model(self):
         self.main_dict[self.NAME_KEY] = 'STMM'
         self.main_dict[self.DO_SCALER_KEY] = False
-        self.main_dict[self.N_TRIALS_KEY] = 3
+        self.main_dict[self.N_TRIALS_KEY] = 5
                 
         params = self.gen_default_params()
         params_new = self.main_dict[self.PARAMS_KEY]

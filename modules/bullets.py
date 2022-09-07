@@ -23,17 +23,62 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils import shuffle
 from sklearn.preprocessing import StandardScaler
+import json
+import pickle
+import pathlib
 np.set_printoptions(threshold=sys.maxsize)
 
 
+
+
+def ask_confirmation(question_text,):
+    out = None
+    while out is None:
+        str_ = input(question_text + ' [y/n]: ')
+        if str_.lower() in ['y', 'yes']:
+            out = True
+        elif str_.lower() in ['n', 'no']:
+            out = False
+        else:
+            print(f"{str_} is not valid anwser!" + ' [y/n]: ')
+    return out
+
+
 def load_data(src):
-    data = np.load(src)
-    return {
-        'x_train': np.nan_to_num(data['x_train'], nan=0, posinf=0),
-        'x_test': np.nan_to_num(data['x_test'], nan=0, posinf=0),
-        'y_train': np.nan_to_num(data['y_train'], nan=0, posinf=0),
-        'y_test': np.nan_to_num(data['y_test'], nan=0, posinf=0),
-    }
+    data_ = np.load(src, allow_pickle=True)
+    nan = 0
+    data = {}
+    for key in ['x_train', 'x_test', 'y_train', 'y_test']:
+        data[key] = data_[key]
+        if np.isnan(data[key]).sum() > 0:
+            data[key] = np.nan_to_num(data[key], nan=nan, posinf=nan)
+            print(f'For {key} nan will be replaced by {nan}!')
+    return data
+
+    
+def load_json(src):
+    with open(src, 'r') as f:
+        out = json.load(f)
+    return out
+
+
+def save_json(data, dst):
+    with open(dst, 'w') as f:
+        json.dump(data, f)
+            
+def save_pickle(data, dst):
+    with open(dst, 'wb') as f:
+        pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+# def load_data(src):
+#     data = np.load(src)
+#     return {
+#         'x_train': np.nan_to_num(data['x_train'], nan=0, posinf=0),
+#         'x_test': np.nan_to_num(data['x_test'], nan=0, posinf=0),
+#         'y_train': np.nan_to_num(data['y_train'], nan=0, posinf=0),
+#         'y_test': np.nan_to_num(data['y_test'], nan=0, posinf=0),
+#     }
 
 
 def get_labels():
@@ -42,10 +87,14 @@ def get_labels():
     return list(set(out))
 
 
-def get_classes_dict(gesutres_file_path='gestures.txt'):
-    with open(gesutres_file_path, 'r') as inp:
-        out = [line.strip() for line in inp.readlines()]
-    # print(out)
+def get_classes_dict(gesutres_file_path=None):
+    
+    if gesutres_file_path is None:
+        out = _get_gesture_txt_list_()
+    else:
+        with open(gesutres_file_path, 'r') as inp:
+            out = [line.strip() for line in inp.readlines()]
+
     classes_dict = {}
     for i, class_ in enumerate(out):
         classes_dict[i] = class_        
@@ -121,6 +170,18 @@ def evaluate(data, model, txt_file=None):
     # print('Accuracy:', accuracy_score(y_test, y_pred), file=out)
     # print('Time:', stop_time, file=out)
     # print('Samples:', len(y_test), file=out)
+    
+    
+def _get_gesture_txt_list_():
+    classes_str = "G01_left_handyes G02_right_handyes G03_left_handno G04_right_handno G05_left_select G06_right_select G07_left_call "\
+                  "G08_right_call G09_left_mute G10_right_mute G11_left_unmute G12_right_unmute G13_left_close G14_right_close G15_left_wave "\
+                  "G16_right_wave G17_left_write G18_right_write G19_headyes G20_headno G21_left_roll G22_right_roll G23_left_yaw G24_right_yaw G25_left_save "\
+                  "G26_right_save G27_left_export G28_right_export G29_left_pupil G30_right_pupil G31_left_swipeup G32_right_swipeup G33_left_swipedown G34_right_swipedown "\
+                  "G35_left_swipeleft G36_right_swipeleft G37_left_swiperight G38_right_swiperight G39_left_high G40_right_high G41_moveforward G42_movebackward "\
+                  "G43_moveup G44_movedown G45_moveleft G46_moveright G47_screenshot G48_central_zoomin G49_central_zoomout G50_left_zoomin G51_left_zoomout "\
+                  "G52_right_zoomin G53_right_zoomout G54_delete"
+    classes = classes_str.split()
+    return classes
 
 
 if __name__ == '__main__':
@@ -132,3 +193,21 @@ if __name__ == '__main__':
     '''
     evaluate('input/mpipe-stratified.npz', 'output/regress-mpipe-stratified.jbl', 'output/evaluate-mpipe-stratified.txt')
     '''
+
+
+
+
+
+
+# def _get_gesture_txt_list_():
+#     classes_str = "G01_left_handyes G02_right_handyes G03_left_handno G04_right_handno G05_left_select G06_right_select G07_left_call "\
+#                   "G08_right_call G09_left_mute G10_right_mute G11_left_unmute G12_right_unmute G13_left_close G14_right_close G15_left_wave "\
+#                   "G16_right_wave G17_left_write G18_right_write G19_headyes G20_headno G21_left_roll G22_right_roll G23_left_yaw G24_right_yaw G25_left_save "\
+#                   "G26_right_save G27_left_export G28_right_export G29_left_pupil G30_right_pupil G31_left_swipeup G32_right_swipeup G33_left_swipedown G34_right_swipedown "\
+#                   "G35_left_swipeleft G36_right_swipeleft G37_left_swiperight G38_right_swiperight G39_left_high G40_right_high G41_moveforward G42_movebackward "\
+#                   "G43_moveup G44_movedown G45_moveleft G46_moveright G47_screenshot G48_central_zoomin G49_central_zoomout G50_left_zoomin G51_left_zoomout "\
+#                   "G52_right_zoomin G53_right_zoomout G54_delete"
+#     classes = classes_str.split()
+#     return classes
+
+

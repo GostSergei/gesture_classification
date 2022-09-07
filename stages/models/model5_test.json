@@ -1,0 +1,4 @@
+{
+    "model_type": "STMM",
+    "params": {"maxIter": 10, "tolSTM": 1e-5, "tol": 1e-5}
+}

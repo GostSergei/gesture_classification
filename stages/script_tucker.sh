@@ -1,3 +1,4 @@
+#!/bin/bash
 python3 ../bullets/model_work.py -s data/skgest-mpipe-center_tucker_full.pkl -m models/model6.json -d ./
 python3 ../bullets/model_work.py -s data/skgest-mpipe-center_tucker_full.pkl -m models/model2.json -d ./
 python3 ../bullets/model_work.py -s data/skgest-mpipe-center_tucker_full.pkl -m models/model3.json -d ./ 

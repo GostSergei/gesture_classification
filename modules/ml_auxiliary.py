@@ -15,7 +15,7 @@ def make_X_y(tensor, labels_list):
     y = np.array(labels_list)
     return X, y
 
-def plot_confusion_matrix(y_test, label, label_dict, ax=None, size=(6, 6)):
+def plot_confusion_matrix(y_test, label, label_dict, ax=None, size=(7, 7)):
     # print(classification_report(label, y_test,
     #                             target_names=[l for l in label_dict.values()]))
 

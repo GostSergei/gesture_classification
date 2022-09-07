@@ -66,16 +66,28 @@ def ask_confirmation(question_text,):
             print(f"{str_} is not valid anwser!" + ' [y/n]: ')
     return out
         
+
+def get_target_files(src, suffix='.json'):
+    src = pathlib.Path(src)
+    src_list = []
+    if src.is_file():
+        src_list += [str(src)]
     
+    if src.is_dir():
+        for src_file in os.listdir(src):
+            if pathlib.Path(src_file).suffix == suffix:
+                src_list += [str(src_file)]
+    return src_list
+
+def form_table(src_list, dst=None):
+    
+    pass
     
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--src', default=None)
     parser.add_argument('-d', '--dst', default=None)
-    
-    parser.add_argument('-r', '--rank',  default=None,
-                        help="For example rank='[1,2]' or rank = '1', default: None")
     
     arg = parser.parse_args()
     
@@ -86,6 +98,12 @@ if __name__ == '__main__':
             exit(0)
         else:
             print(f'{arg.dst} will be reloaded')
+            
+    assert dst.is_file(), 'Error! {dst} should be a csv file!'
+            
+    src_list = get_target_files(arg.src)
+    df = form_table(src_list, dst)
+    
             
     # tucker_decomposition(arg.src, arg.dst, arg.rank)
     exit(0)

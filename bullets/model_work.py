@@ -12,17 +12,16 @@ from modules.models_module import create_model
 
 
 def load_data(src):
-    data = np.load(src, allow_pickle=True)
-    print(type(data))
+    data_ = np.load(src, allow_pickle=True)
+    nan = 0
+    data = {}
+    for key in ['x_train', 'x_test', 'y_train', 'y_test']:
+        data[key] = data_[key]
+        if np.isnan(data[key]).sum() > 0:
+            data[key] = np.nan_to_num(data[key], nan=nan, posinf=nan)
+            print(f'For {key} nan will be replaced by {nan}!')
     return data
-    print(type(data))
-    return {
-        
-        'x_train': np.nan_to_num(data['x_train'], nan=0, posinf=0),
-        'x_test': np.nan_to_num(data['x_test'], nan=0, posinf=0),
-        'y_train': np.nan_to_num(data['y_train'], nan=0, posinf=0),
-        'y_test': np.nan_to_num(data['y_test'], nan=0, posinf=0),
-    }
+
     
 def load_json(src):
     with open(src, 'r') as f:
@@ -73,7 +72,7 @@ def work_with_model(src, m_src, dst):
     print('Test acc = ', accuracy_score(y_test, preds))
     print()
     # inferance
-    inf_time = model.eval_inference_time(data_tensor_test[0:1,:,:], 100)
+    inf_time = model.eval_inference_time(data_tensor_test[0:1], 100)
     print()
     # acc
     accs = model.eval_model(data_tensor, y_train, data_tensor_test, y_test)
