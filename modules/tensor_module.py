@@ -14,7 +14,7 @@ def get_tucker_tensors(data_tensor, data_tensor_test, rank=-1, n_iter_max=1000, 
         rank = data_tensor.shape[1:]
         
     if verbose > 1:
-        print(f"Decomposition with rank: {rank}. tensor shape: {data_tensor.shape}")
+        print(f"Tucker decomposition with rank: {rank}. tensor shape: {data_tensor.shape}")
         
     modes = [i for i in range(len(data_tensor.shape))]
     modes = modes[1:]
@@ -54,7 +54,7 @@ def get_SVD_tensors(data_tensor, data_tensor_test, rank=-1,  verbose=2):
         rank = np.min(t_uf0.shape)
         
     if verbose > 1:
-        print(f"Decomposition with rank: {rank}. tensor shape: {data_tensor.shape}")
+        print(f"SVD decomposition with rank: {rank}. tensor shape: {data_tensor.shape}")
         
     u_0, s_0, v_0 = tl.partial_svd(t_uf0, )
 

@@ -5,6 +5,8 @@ import copy
 import numpy as np
 import pathlib
 import pickle
+import time
+import datetime
 
 sys.path.append('/home/s.gostilovich/gesture_progect/gesture_classification')
 from modules.tensor_module import get_SVD_tensors
@@ -21,9 +23,14 @@ def load_data(src):
     
     
 def SVD_decomposition(src, dst, rank=-1):
+    # print(f'SVD_decomposition of {src}')
     data = load_data(src)
     data_tensor, data_tensor_test = data['x_train'], data['x_test']
+    t = time.time()
     tensor_cvd, tensor_cvd_test = get_SVD_tensors(data_tensor, data_tensor_test, rank=rank)
+    t = time.time() - t
+    print(f"Decompose time: {t:.3f} s")
+    
     data_svd = copy.deepcopy(data)
     data_svd['x_train'] = tensor_cvd
     data_svd['x_test'] = tensor_cvd_test
@@ -51,6 +58,7 @@ def ask_confirmation(question_text,):
     
     
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--src', default=None)
@@ -62,12 +70,20 @@ if __name__ == '__main__':
     arg = parser.parse_args()
     
     dst = pathlib.Path(arg.dst)
-    if pathlib.Path(arg.dst).exists():
-        if not ask_confirmation(f'Reload {arg.dst}?'):
-            print('Script was stopped!')
-            exit(0)
-        else:
-            print(f'{arg.dst} will be reloaded')
+    # if pathlib.Path(arg.dst).exists():
+    #     if not ask_confirmation(f'Reload {arg.dst}?'):
+    #         print('Script was stopped!')
+    #         exit(0)
+    #     else:
+    #         print(f'{arg.dst} will be reloaded')
             
+    script_name = pathlib.Path(__file__).name
+    ftime_str = '%y.%m.%d-%H:%M:%S'
+    date_time = datetime.datetime.now()
+    print(f"Start {script_name} for {arg.src}")
+    print(f"Start time: {date_time.strftime(ftime_str)}")
     SVD_decomposition(arg.src, arg.dst, arg.rank)
+    date_time_end = datetime.datetime.now()
+    print(f"End: {script_name} at {date_time_end.strftime(ftime_str)} [{(date_time_end-date_time).total_seconds():.3f} s]")
+    print()
     exit(0)

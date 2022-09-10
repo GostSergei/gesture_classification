@@ -1,0 +1,20 @@
+Using tensorly:
+- Tucker decomposition with rank: (120, 225). tensor shape: (5300, 120, 225) - mpipe
+Tucker decomposition for 20 subjects and mpipe:  for mpipe -> about 220 singel and 300s with SVD
+
+- SVD decomposition with rank: 5300. tensor shape: (5300, 120, 225) - mpipe
+SVD decomposition for 20 subjects and mpipe -> about 100s singel and 160 s with Tucker
+
+
+
+- Tucker decomposition with rank: (120, 75). tensor shape: (5300, 120, 75) - ntu
+Tucker decomposition for 20 subjects  ->  100s with SVD
+- SVD decomposition with rank: 5300. tensor shape: (5300, 120, 75) - ntu
+SVD decomposition for 20 subjects ->  60-90 s with Tucker
+
+
+- Tucker decomposition with rank: (120, 186). tensor shape: (5300, 120, 186)
+Tucker decomposition for 20 subjects and mpipe:  for mpipe -> 340 - 400 s with SVD and singel
+- SVD decomposition with rank: 5300. tensor shape: (5300, 120, 186) - smpl
+SVD decomposition for 20 subjects ->  150 s with Tucker
+
