@@ -10,6 +10,8 @@ import datetime
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
+
+# you need to install your abs path the the parent folder of modules
 sys.path.append('/home/s.gostilovich/gesture_progect/gesture_classification')
 from modules.models_module import create_model
 from modules.bullets import get_classes_dict, load_data, load_json, save_json, save_pickle, ask_confirmation

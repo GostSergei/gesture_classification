@@ -8,6 +8,7 @@ import pickle
 import time
 import datetime
 
+# you need to install your abs path the the parent folder of modules
 sys.path.append('/home/s.gostilovich/gesture_progect/gesture_classification')
 from modules.tensor_module import get_tucker_tensors
 

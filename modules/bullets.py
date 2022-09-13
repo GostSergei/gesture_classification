@@ -21,7 +21,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.utils import shuffle
+
 from sklearn.preprocessing import StandardScaler
 import json
 import pickle
@@ -71,14 +71,6 @@ def save_pickle(data, dst):
         pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-# def load_data(src):
-#     data = np.load(src)
-#     return {
-#         'x_train': np.nan_to_num(data['x_train'], nan=0, posinf=0),
-#         'x_test': np.nan_to_num(data['x_test'], nan=0, posinf=0),
-#         'y_train': np.nan_to_num(data['y_train'], nan=0, posinf=0),
-#         'y_test': np.nan_to_num(data['y_test'], nan=0, posinf=0),
-#     }
 
 
 def get_labels():
