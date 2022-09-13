@@ -3,6 +3,10 @@ import pathlib
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
+import pickle
+
+from sklearn.metrics import accuracy_score
 
 try:
     from modules.bullets import load_json 
@@ -143,6 +147,83 @@ def plot_swarmboxplot(table, y='Accuracy', x='Model', ax=None):
     sns.swarmplot( x=x, y=y, data=table, ax=ax)
     sns.boxplot(x=x, y=y, data=table, showcaps=True, boxprops={'facecolor':'None'},
                     showfliers=True,whiskerprops={'linewidth':0.75}, ax=ax)
+    
+    
+    
+
+        
+        
+def  drop_gesture(preds_in, y_test_in, drop_classes=[16]):
+    preds,  y_test = np.copy(preds_in), np.copy(y_test_in)
+    
+    for label in drop_classes:
+        delete_idxs = np.where(y_test == label)
+        y_test = np.delete(y_test, delete_idxs)
+        preds = np.delete(preds, delete_idxs)
+        
+    return preds,  y_test
+
+def  merge_gesture(preds_in, y_test_in, merge_classes=[[17, 16]]):
+    preds,  y_test = np.copy(preds_in), np.copy(y_test_in)
+    
+    for label_pair in merge_classes:
+        # update_idxs = np.where(y_test == label_pair[1])
+        update_value =  label_pair[0]
+        y_test[np.where(y_test == label_pair[1])] = update_value
+        preds[np.where(preds == label_pair[1])] = update_value
+        
+    return preds,  y_test
+
+
+
+
+def filter_acc(src, drop_classes=[16], merge_classes=[[17, 16]]):
+    df = pd.DataFrame()
+
+    # src_list_pkl = get_target_files(src, suffix='.pkl')
+    src_list_json = get_target_files(src, suffix='.json')
+    
+    for file_json in src_list_json:
+        
+        file_pkl = file_json[:-5] + '.pkl'
+        
+        main_dict = {}
+        file_name = pathlib.Path(file_json).stem
+        pref = '_'.join(file_name.split('_')[1:])
+        if pref == '':
+            pref = 'original'
+        # pref = [pref] if pref != '' else []
+
+        res_dict = load_json(file_json)
+        main_dict['model'] = '+'.join([pref] + [res_dict['model']])
+        
+        with open(file_pkl, 'rb') as f:
+            data = pickle.load(f)
+
+        preds, y_test = data['preds'], data['y_test']
+        
+        preds_drop, y_test_drop = drop_gesture(preds, y_test, drop_classes)
+        acc_drop = accuracy_score(y_test_drop, preds_drop)
+        main_dict['acc_drop'] = [acc_drop]
+        main_dict['acc_drop_fancy'] = np.round(100*acc_drop, 2)
+        
+        preds_merge, y_test_merge = merge_gesture(preds, y_test, merge_classes)
+        acc_merge = accuracy_score(y_test_merge, preds_merge)
+        main_dict['acc_merge'] = [acc_merge]
+        main_dict['acc_merge_fancy'] = np.round(100*acc_merge, 2)
+        
+        
+        
+        df_row = pd.DataFrame(main_dict)
+        df = pd.concat([df, df_row])
+        
+        
+    df = df.sort_values(['model'])
+    df = df.reset_index(drop=True)
+    return df
+ 
+        
+     
     
     
         
