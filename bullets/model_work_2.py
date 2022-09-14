@@ -1,3 +1,13 @@
+# Conduction the first experiment
+# parameters: 
+# -s or --srs - a source of the data, file path.
+# -m or --src_m - a source of the ML model description, file path. gesture_classification/stages/models/*
+# -d or --dst - output dir of the model (dir path), output name will be formed automatically:
+#     .json - accuracy data, 
+#     .pkl - dictionary of {   y_test: ... , preds: ...}, 
+#     .jpg - confusion matrix
+
+
 import argparse
 import os
 import sys

@@ -1,3 +1,10 @@
+# the old vertion of cross-validation experiment
+# used only origin data and perform tucker and SVD decomposition (if needed)
+# Trunsformation means more time!
+# Parameters: as model_work_cv_v2.py +
+# '-t', '--transform', default='origin' (can be ['origin', 'tucker', 'svd'])
+
+
 import argparse
 import os
 import sys

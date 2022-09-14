@@ -1,3 +1,5 @@
+# the old vertion of the work with models!
+
 import argparse
 import os
 import sys
@@ -98,8 +100,8 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--m_src', default=None)
     parser.add_argument('-d', '--dst', default=None)
     
-    parser.add_argument('-r', '--rank',  default=None,
-                        help="For example rank='[1,2]' or rank = '1', default: None")
+    # parser.add_argument('-r', '--rank',  default=None,
+    #                     help="For example rank='[1,2]' or rank = '1', default: None")
     
     arg = parser.parse_args()
     

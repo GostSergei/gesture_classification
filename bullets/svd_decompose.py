@@ -1,3 +1,9 @@
+# SVD-based data transformation 
+# -s or --srs - a source of the data, file path
+# -d or --dst - output file_name (extension should be .pkl as pickle lib was used to save the output data), file name 
+# -r or --rank - decomposition rank. For example rank='100', default: -1 (maximum rank)
+
+
 import argparse
 import os
 import sys
@@ -66,7 +72,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--dst', default=None)
     
     parser.add_argument('-r', '--rank',  default=-1,
-                        help="For example rank='[1,2]' or rank = '1', default: -1")
+                        help="For example rank='100', default: -1 (maximum rank)")
     
     arg = parser.parse_args()
     
