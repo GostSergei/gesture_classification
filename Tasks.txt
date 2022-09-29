@@ -1,0 +1,21 @@
+Tasks:
+
+1) Test different tensor libs and different tensor decompositions
+libs: tntorch, "TensorD" and Tensortools (Tomar) 
+2) ask Prof.Phan about his decompotions base on stability and test them
+
+3) Test other fill.na methods. Interpolation, previouse values
+4) Teso PSA instead of SVD. Maybe update tacker decompositions
+
+* test other representations
+5) Normalize the x, y, z, coordinates 
+6) Using Normalized coordinates (angels)
+7) Other representaion (fisher vecrot, Discrete)
+
+8) Pure tensor methods 
+
+Necessary auxiliary tasks:
+a) unified pipeline and name data rules 
+b) 
+
+

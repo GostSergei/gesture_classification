@@ -1,5 +1,8 @@
 import numpy as np
 import tensorly as tl
+import torch
+import tntorch as tn
+
 from tensorly.decomposition import tucker, parafac, partial_tucker
 from tensorly.tenalg import mode_dot, multi_mode_dot
 
@@ -30,6 +33,39 @@ def get_tucker_tensors(data_tensor, data_tensor_test, rank=-1, n_iter_max=1000, 
     tensor_tucker_test = multi_mode_dot(tt, [matrix.T for matrix in factors[1:]], modes=modes)
         
     return tensor_tucker, tensor_tucker_test
+
+def get_tucker_tensors_v2(data_tensor, data_tensor_test, rank=-1, n_iter_max=1000, verbose=2):
+    t = data_tensor
+    tt = data_tensor_test
+    
+    if rank is None or rank == -1:
+        rank = data_tensor.shape
+        
+    if verbose > 1:
+        print(f"Tucker decomposition with rank: {rank}. tensor shape: {data_tensor.shape}")
+        
+    modes = [i for i in range(len(data_tensor.shape))]
+    modes = modes[1:]
+    t_tucker = tn.Tensor(torch.Tensor(t), ranks_tucker=rank)
+    print(tn.relative_error(torch.Tensor(t), t_tucker))
+    core_tucker = t_tucker.tucker_core().numpy()
+    factors_tucker = [U.numpy() for U in t_tucker.Us]
+    # core_tucker, factors_tucker = partial_tucker(t, modes, rank=rank, n_iter_max=n_iter_max)
+    
+    if verbose > 0:
+        t_rec_tucker = tl.tucker_to_tensor((core_tucker, factors_tucker))
+        print(f"Tucker: Rank: {rank }, rel_error: {tl.norm(t - t_rec_tucker)/tl.norm(t): .5f} ; norm origin: {tl.norm(t)} ; norm recovered: {tl.norm(t_rec_tucker)}")
+            
+    factors = factors_tucker
+    # factors = [None] + factors
+    tensor_tucker = multi_mode_dot(t, [matrix.T for matrix in factors[1:]], modes=modes)
+    tensor_tucker_test = multi_mode_dot(tt, [matrix.T for matrix in factors[1:]], modes=modes)
+        
+    return tensor_tucker, tensor_tucker_test
+
+
+
+
 
 def recover_svd(u_s_v, rank=None):
     u, s, v = u_s_v
