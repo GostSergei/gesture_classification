@@ -10,7 +10,7 @@ The main bullets are model_work_2.py (the first experiment) and model_work_cv_v2
 
 - notes: gesture_classification/stages/notes/*
 
-- data sorece folder: gesture_classification/stages/data/*
+- data sorece folder: gesture_classification/stages/data/*. (Will be transferred separately, since large files)
 
 - Different results folders: gesture_classification/stages/results...
 

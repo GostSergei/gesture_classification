@@ -23,14 +23,13 @@ from sklearn.metrics import accuracy_score
 # you need to install your abs path the the parent folder of modules
 sys.path.append('/home/s.gostilovich/gesture_progect/gesture_classification')
 from modules.models_module import create_model
-from modules.bullets import get_classes_dict, load_data, load_json, save_json, save_pickle, ask_confirmation
+from modules.bullets import get_classes_dict, load_data, load_json, save_json, save_pickle, decorator_script_wrap
 
 from modules.results_auxiliary import get_target_files
-from modules.tensor_module import get_tucker_tensors, get_SVD_tensors
-# import modules.models_module 
+
 
         
-        
+@decorator_script_wrap       
 def work_with_model_cv(src, m_src, dst):
     
     cv_scr_list = get_target_files(src, suffix='.npz')
@@ -46,7 +45,6 @@ def work_with_model_cv(src, m_src, dst):
     out_pred_test = []
     
     
-    
     for scr_file in tqdm(cv_scr_list):
         print()
         print(f"For {scr_file}:")
@@ -55,8 +53,7 @@ def work_with_model_cv(src, m_src, dst):
         
         data = load_data(str(scr_file))
         data_tensor, data_tensor_test, y_train, y_test = data['x_train'], data['x_test'], data['y_train'], data['y_test']
-           
-               
+              
         init_model_dict = load_json(m_src)
         model = create_model(init_model_dict)
         
@@ -83,43 +80,27 @@ def work_with_model_cv(src, m_src, dst):
     return  out
          
     
-    
-    
-    
-    
-    
-
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--src', default=None)
     parser.add_argument('-m', '--m_src', default=None)
     
     parser.add_argument('-d', '--dst', default=None)
-    # parser.add_argument('-t', '--transform', default='origin')
-    
-    # parser.add_argument('-r', '--rank',  default=None,
-    #                     help="For example rank='[1,2]' or rank = '1', default: None")
-    
+
     arg = parser.parse_args()
     
     dst = pathlib.Path(arg.dst)
     assert dst.is_dir(), f'Error! {dst} should be dirrectory'
-    # classes = get_classes_dict()
-    
-     
-    # assert arg.transform.lower() in ['origin', 'tucker', 'svd'], "Error! -t should be one of"\
-    #                                                           f" {['origin', 'tucker', 'svd']}, given {arg.transform.lower()}"
-    
+      
     script_name = pathlib.Path(__file__).name
-    ftime_str = '%y.%m.%d-%H:%M:%S'
-    date_time = datetime.datetime.now()
-    print(f"Start {script_name} for {arg.src}")
-    print(f"Start time: {date_time.strftime(ftime_str)}")
-            
-    work_with_model_cv(arg.src, arg.m_src, arg.dst)
     
-    date_time_end = datetime.datetime.now()
-    print(f"End: {script_name} at {date_time_end.strftime(ftime_str)} [{(date_time_end-date_time).total_seconds():.3f} s]")
+    print(f"Start {script_name}:")
+    # script function
+    work_with_model_cv(src=arg.src,m_src=arg.m_src, dst=arg.dst)
+    ###
+    print(f"Finished script: {script_name}")
     print()
     
-    exit(0)
+
+if __name__ == '__main__': 
+    main()    

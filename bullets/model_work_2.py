@@ -22,47 +22,15 @@ from sklearn.metrics import accuracy_score
 # you need to install your abs path the the parent folder of modules
 sys.path.append('/home/s.gostilovich/gesture_progect/gesture_classification')
 from modules.models_module import create_model
-from modules.bullets import get_classes_dict, load_data, load_json, save_json, save_pickle, ask_confirmation
+from modules.bullets import get_classes_dict, load_data, load_json, save_json, save_pickle, decorator_script_wrap
 from modules.ml_auxiliary import plot_confusion_matrix
-# import modules.models_module 
 
-
-# def load_data(src):
-#     data_ = np.load(src, allow_pickle=True)
-#     nan = 0
-#     data = {}
-#     for key in ['x_train', 'x_test', 'y_train', 'y_test']:
-#         data[key] = data_[key]
-#         if np.isnan(data[key]).sum() > 0:
-#             data[key] = np.nan_to_num(data[key], nan=nan, posinf=nan)
-#             print(f'For {key} nan will be replaced by {nan}!')
-#     return data
-
-    
-# def load_json(src):
-#     with open(src, 'r') as f:
-#         out = json.load(f)
-#     return out
         
-    
-    
-
-
-
-# def ask_confirmation(question_text,):
-#     out = None
-#     while out is None:
-#         str_ = input(question_text + ' [y/n]: ')
-#         if str_.lower() in ['y', 'yes']:
-#             out = True
-#         elif str_.lower() in ['n', 'no']:
-#             out = False
-#         else:
-#             print(f"{str_} is not valid anwser!" + ' [y/n]: ')
-#     return out
+@decorator_script_wrap        
+def work_with_model_v2(src, m_src, dst, classes='def'):
+    if classes == 'def':
+        classes = get_classes_dict()
         
-        
-def work_with_model_v2(src, m_src, dst, classes):
     data = load_data(src)
     data_tensor, data_tensor_test, y_train, y_test = data['x_train'], data['x_test'], data['y_train'], data['y_test']
     
@@ -108,12 +76,7 @@ def work_with_model_v2(src, m_src, dst, classes):
          
     
     
-    
-    
-    
-    
-
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--src', default=None)
     parser.add_argument('-m', '--m_src', default=None)
@@ -126,17 +89,16 @@ if __name__ == '__main__':
     
     dst = pathlib.Path(arg.dst)
     assert dst.is_dir(), f'Error! {dst} should be dirrectory'
-    classes = get_classes_dict()
-    
-    # if not pathlib.Path(arg.dst).is_dir():
-    #     if pathlib.Path(arg.dst).exists():
-    #         if not ask_confirmation(f'Reload {arg.dst}?'):
-    #             print('Script was stopped!')
-    #             exit(0)
-    #         else:
-    #             print(f'{arg.dst} will be reloaded')
                 
+    script_name = pathlib.Path(__file__).name
     
-            
-    work_with_model_v2(arg.src, arg.m_src, arg.dst, classes)
-    exit(0)
+    print(f"Start {script_name}:")
+    # script function
+    work_with_model_v2(src=arg.src,m_src=arg.m_src, dst=arg.dst)
+    ###
+    print(f"Finished script: {script_name}")
+    print()
+    
+
+if __name__ == '__main__': 
+    main()    

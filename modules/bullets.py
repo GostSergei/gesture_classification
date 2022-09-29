@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 import time
+import datetime
 import joblib as jbl
 import os.path as osp
 import numpy as np
@@ -27,6 +28,34 @@ import json
 import pickle
 import pathlib
 np.set_printoptions(threshold=sys.maxsize)
+
+
+
+def decorator_script_wrap(main_func):
+    def wrapper( *args, **kwargs):
+        # print('ddddddd')
+        # script_name = pathlib.Path(__file__).name
+        ftime_str = '%y.%m.%d-%H:%M:%S'
+        date_time = datetime.datetime.now()
+        
+        # print(f"Start {script_name}:")
+        if len(args) > 0:
+            print(f"For *args:", *args)
+        for key in kwargs.keys():
+            print(f"{key}= {kwargs[key]}")
+            
+        # print(f"Start {script_name}")
+        print()
+        print(f"Start time: {date_time.strftime(ftime_str)}")
+        print()
+        main_func(*args, **kwargs)
+        
+        date_time_end = datetime.datetime.now()
+        print()
+        print(f"End time= {date_time_end.strftime(ftime_str)} [{(date_time_end-date_time).total_seconds():.3f} s]")
+        # print()
+        # exit(0)
+    return wrapper
 
 
 

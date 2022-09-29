@@ -167,6 +167,33 @@ def form_samples_labels_lists(data_dict):
     return samples_list,  labels_list
 
 
+def form_samples_labels_se_lists(data_dict):
+    s_key = 'action_start'
+    e_key = 'action_end'
+    label_key = 'label'
+    samples_list,  labels_list, se_list = [], [], []
+    for g_id in data_dict.keys():
+        labels_list += [data_dict[g_id][CLASS_LABEL_KEY]]
+        
+        data = data_dict[g_id][SKELETON_KEY].to_numpy()
+        samples_list += [np.expand_dims(data, 0)]
+        
+        s = data_dict[g_id][INFO_KEY][label_key][s_key]
+        e = data_dict[g_id][INFO_KEY][label_key][e_key]
+        se_list += [[s, e]]
+        
+    return samples_list,  labels_list, se_list
+
+
+def form_se_tensor(se_list, time_size=120):
+    se_tensor = np.zeros([len(se_list),time_size])
+    for i, se in enumerate(se_list):
+        s, e = np.round(se, 0).astype(int) 
+        se_tensor[i][s:e+1] = 1
+    return se_tensor
+        
+
+
 
 
 # Tensors
