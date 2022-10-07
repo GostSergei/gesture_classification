@@ -7,6 +7,7 @@ from tensorly.decomposition import tucker, parafac, partial_tucker
 from tensorly.tenalg import mode_dot, multi_mode_dot
 # from dataset_auxiliary import *
 from modules.dataset_auxiliary import *
+from modules.ml_auxiliary import *
 
 
 
@@ -63,6 +64,7 @@ def form_important_points(df_skeleton, coords=['x', 'y', 'z'], pose_points='def'
     coords = ''.join(coords)
     if pose_points == 'def':
         pose_points = [i for i in range(25)]
+        
     if hand_points == 'def':
         hand_points = [i for i in range(21)]
         
@@ -87,6 +89,7 @@ def update_skeleton(input_data_dict, update_df_func, kwargs={}, show=True):
     delta_list = []
     for g_id in data_dict.keys():
         df = data_dict[g_id][SKELETON_KEY]
+        
         df, delta = update_df_func(df, **kwargs)
         data_dict[g_id][SKELETON_KEY] = df
         delta_list += [delta]
@@ -112,7 +115,16 @@ def select_points(input_data_dict, coords=['x', 'y', 'z'], pose_points='def', ha
 def update_df_fill_na(df, value=None, method=None, axis=None, limit=None):
     delta = df.isna().sum()
     df = df.fillna(value=value, method=method, axis=axis, limit=limit)
+    delta = delta - df.isna().sum()
     return df, delta
+
+# def update_df_last_value(df, value=None, method=None, axis=None, limit=None):
+#     delta = df.isna().sum()
+#     df = df.fillna(value=value, method=method, axis=axis, limit=limit)
+#     return df, delta
+
+
+
 
 def update_df_select_points(df, coords=['x', 'y', 'z'], pose_points='def', hand_points='def'):
     before = len(df.columns)
@@ -191,6 +203,8 @@ def form_se_tensor(se_list, time_size=120):
         s, e = np.round(se, 0).astype(int) 
         se_tensor[i][s:e+1] = 1
     return se_tensor
+
+
         
 
 

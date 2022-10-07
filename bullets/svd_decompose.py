@@ -26,13 +26,13 @@ def SVD_decomposition(src, dst, rank=-1):
     data = load_data(src)
     data_tensor, data_tensor_test = data['x_train'], data['x_test']
     t = time.time()
-    tensor_cvd, tensor_cvd_test = get_SVD_tensors(data_tensor, data_tensor_test, rank=rank)
+    tensor_svd, tensor_svd_test = get_SVD_tensors(data_tensor, data_tensor_test, rank=rank)
     t = time.time() - t
     print(f"Decompose time: {t:.3f} s")
     
     data_svd = copy.deepcopy(data)
-    data_svd['x_train'] = tensor_cvd
-    data_svd['x_test'] = tensor_cvd_test
+    data_svd['x_train'] = tensor_svd
+    data_svd['x_test'] = tensor_svd_test
     
     if dst is not None:
         with open(dst, 'wb') as f:

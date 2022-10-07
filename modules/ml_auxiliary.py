@@ -7,6 +7,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.neighbors import KNeighborsClassifier
 
 from IPython.display import clear_output
+from tqdm import tqdm
 
 
 
@@ -103,4 +104,71 @@ def check_KNN(X_train, y_train, X_test, y_test, model_name,  n_start=1, n_end=20
     plt.title(model_name)
     plt.gca().set_xlabel('N neighbors')
     plt.gca().set_ylabel('Mean accuracy')
+    
+    
+    
+def test_accuracy(model_pair, tensor, tensor_test, labels_list, labels_list_test, do_scaler=True, n_trials=5, verbose=1): 
+
+    acc_list = []
+    print(f"For model: {model_pair[1]}")    
+    for i in tqdm(range(n_trials)):
+        skip_refitting = i == 0
+        model, model_name, X_train, X_test, y_train, y_test = train_model(model_pair, tensor, tensor_test, labels_list,
+                                                                          labels_list_test, do_scaler, skip_refitting=skip_refitting)
+        label_test = model.predict(X_test)
+        acc_test = accuracy_score(y_test, label_test)
+        acc_list += [acc_test]
+        
+    acc_arr = np.array(acc_list)
+    if verbose > 0:
+        mean_ = acc_arr.mean()*100
+        std_ = acc_arr.std()*100
+        print(f"Acc of {model_name}: {mean_:.2f}({std_:.2f}) %")
+    
+    return  acc_arr
+    
+
+
+def check_model(model, model_name, X_train, X_test, y_train, y_test, exp_cofig, label_dict):
+    label_train = model.predict(X_train)
+    label_test = model.predict(X_test)
+    compare_train_test_confusion_matrices(y_train, label_train, y_test, label_test, label_dict)
+    plt.gcf().suptitle( model_name+ ": "+ exp_cofig)
+    print()
+    
+    
+def _model_is_fitted_(model):
+    return not len(dir(model)) == len(dir(type(model)()))
+
+def train_model(model_pair, tensor, tensor_test, labels_list, labels_list_test, do_scaler=True, skip_refitting=False):
+    model, model_name = model_pair
+    X_train, y_train = make_X_y(tensor, labels_list)
+    X_test, y_test = make_X_y(tensor_test, labels_list_test)
+    
+    
+    if model_name in ['STM', 'STMM']:
+        new_dims = tensor.shape
+        new_dims_test = tensor_test.shape
+        if len(new_dims) < 3:
+            new_dims = list(new_dims) + [1]
+            new_dims_test = list(new_dims_test) + [1]
+        X_train = X_train.reshape(new_dims)
+        X_test = X_test.reshape(new_dims_test)
+        print('Tensor ML model is used!')
+    else:
+        if do_scaler:
+            scaler = StandardScaler().fit(X_train) 
+            X_train = scaler.transform(X_train)
+            X_test = scaler.transform(X_test)
+
+    if skip_refitting and _model_is_fitted_(model):
+        model = model
+        # print('Model fitting was skipped!')
+    else:
+        model = model.fit(X_train, y_train)
+        
+    return model, model_name, X_train, X_test, y_train, y_test
+
+
+
     

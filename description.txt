@@ -1,0 +1,13 @@
+Data naming:
+
+skgest-mpipe-center-<folder->-fill_0-raw-tucker_full<.pkl>
+dadast_name - skeleton_type - camera - folder or fule - work_with_missing_data - coordinate_representation - transformation ...
+
+transformation:
+- origin or '' -> original or no transformation 
+- tuker_full - after Tuker-based transformation, full means maximum rank was used. Lib: tensorly
+- tuker_full_tn - as tucker full, but lib: tntorch
+- SVD_maz - svd decomposition, max mean that the maximum rank was used. In our case maximum rank is from the sample dementions.
+Lib: tensorly (almost equals to torch)
+- pca_max - pca decompostion, max mean that the maximum rank (n-components) was used. In our case maximum rank is from the sample dementions.
+Lib: sklearn

@@ -32,7 +32,7 @@ def get_target_files(src, suffix='.json'):
                 src_list += [os.path.join(src, src_file)]
     return src_list
 
-
+# first version of results 
 def form_table_v1(src_list, dst=None):
     
     df = pd.DataFrame()
@@ -61,8 +61,8 @@ def form_table_v1(src_list, dst=None):
     return df
 
 
+# the main version of results for the stage 2 
 def form_table_v2(src_list, dst=None):
-    
     df = pd.DataFrame()
 
     for src_file in src_list:
@@ -79,7 +79,6 @@ def form_table_v2(src_list, dst=None):
         pref = '_'.join(file_name.split('_')[1:])
         if pref == '':
             pref = 'original'
-        # pref = [pref] if pref != '' else []
         
         main_dict['model'] = '+'.join([pref] + [res_dict['model']])
         df_row = pd.DataFrame(main_dict)
@@ -89,6 +88,37 @@ def form_table_v2(src_list, dst=None):
     
     df = df.reset_index(drop=True)
     return df
+
+
+# the main version of results for the stage 3 
+def form_table_v3(src_list, dst=None):
+    
+    df = pd.DataFrame()
+
+    for src_file in src_list:
+        res_dict = load_json(src_file)
+        main_dict = {}
+        
+        for key in ['model','mean_acc', 'std_acc', 'inf_time', 'fitting_time']:
+            if key in res_dict.keys():
+                main_dict[key] = [res_dict[key]]
+            else:
+                print(f'Warning! {key} is not in data')
+           
+        file_name = pathlib.Path(src_file).stem
+        pref = '-'.join(file_name.split('-')[-1])
+        
+        main_dict['model'] = '+'.join([pref] + [res_dict['model']])
+        df_row = pd.DataFrame(main_dict)
+        df = pd.concat([df, df_row])
+        
+    df = df.sort_values(['model'])
+    
+    df = df.reset_index(drop=True)
+    return df
+
+
+
 
 
 def get_fancy_table_v1(table):
@@ -118,7 +148,7 @@ def collect_accuracy(src, value_key='mean_acc', name_key = 'model'):
     model_name = res_list[0][name_key].split(":")[0]
     acc_dict = {}
     for res in res_list:
-        name = res[name_key].split("-")[-1]
+        name = res[name_key].split("-")[1]
         acc_dict[name] = [res[value_key]]
     acc_dict = dict(sorted(acc_dict.items()))
     return acc_dict, model_name

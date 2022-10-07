@@ -73,15 +73,33 @@ def ask_confirmation(question_text,):
     return out
 
 
-def load_data(src):
+def load_data(src, nan='ffill'):
+    try:
+        nan = float(nan)
+    except:
+        nan = nan        
+    method_list = ['ffill',]
+    assert isinstance(nan, (float)) or nan in method_list, f"Error! nan could be value or {method_list}, not {nan}"
+    
     data_ = np.load(src, allow_pickle=True)
-    nan = 0
     data = {}
     for key in ['x_train', 'x_test', 'y_train', 'y_test']:
         data[key] = data_[key]
         if np.isnan(data[key]).sum() > 0:
-            data[key] = np.nan_to_num(data[key], nan=nan, posinf=nan)
-            print(f'For {key} nan will be replaced by {nan}!')
+            if isinstance(nan, (int, float)):
+                data[key] = np.nan_to_num(data[key], nan=nan, posinf=nan)
+            elif nan in ['ffill']:
+                data[key] = ffill_nans(data[key])
+                print(f'For {key} nan will be replaced by {nan}!')
+    return data
+
+def ffill_nans(data_3D, table_axis=0, remain_nan_value=0):
+    data = data_3D.copy()
+    for i in range(data.shape[0]):
+        df = pd.DataFrame(data[i])
+        df.fillna(method='ffill', inplace=True, axis=table_axis)
+        df.fillna(value=remain_nan_value, inplace=True)
+        data[i] = df.to_numpy()
     return data
 
     
