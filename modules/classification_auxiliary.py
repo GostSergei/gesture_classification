@@ -132,7 +132,7 @@ def update_df_select_points(df, coords=['x', 'y', 'z'], pose_points='def', hand_
     after = len(df.columns)
     return df, before - after 
 
-def update_df_solve_time(df, max_time=120):
+def update_df_crop_time(df, max_time=120):
     delta = True
     df = df.iloc[:max_time, :]
     return df, delta
