@@ -1,0 +1,4 @@
+tucker_tn, tucker, and tucker_tn_full - lookss like the same distribution!
+tucker_tn vs tucker: p= 0.69
+tucker_tn vs tucker_tn_full:p = 0.54
+
