@@ -1,4 +1,54 @@
-tucker_tn, tucker, and tucker_tn_full - lookss like the same distribution!
+tucker_tn, tucker, and tucker_tn_full - looks like the same distribution!
 tucker_tn vs tucker: p= 0.69
-tucker_tn vs tucker_tn_full:p = 0.54
+tucker_tn vs tucker_tn_ffill:p = 0.54
 
+Bach more difference, but not stat significant
+tucker_tn_4d vs tucker_tn: p = 0.1764
+tucker_tn_ffill_4d vs tucker_tn: p = 0.0588 (mpipe)
+tucker_tn_ffill_4d vs tucker_tn: p = 0.0669 (smpl)
+
+ttest_ind for coord_3d, tucker_coord_3d, tucker_coord_4d, tucker_c+v_4D, tucker_c+v_5D for Random Forest 
+p0 = 0.05 / 10 = 0.005(combinations of 5 to 2) 
+    mpipe:
+        coord_3d VS tucker_coord_3d: [p=0.098, stat=-1.693] - No stat difference 
+        tucker_coord_3d VS tucker_coord_4d, tucker_c+v_4D, tucker_c+v_5D: 0.59, 0.88, 0.99 - No stat difference
+        **coord_3d VS tucker_coord_4d, tucker_c+v_4D, tucker_c+v_5D: [p=0.001, stat=-3.781]  - Stat difference!!
+        Others - No stat difference 
+
+    smpl: - Stat difference!!
+        coord_3d and tucker_coord_3d: False [p=0.289, stat=-1.075] - No stat difference
+        **coord_3d VS  tucker_coord_4d, tucker_c+v_4D, tucker_c+v_5D: p=0.003, 0.003, 0.002  - Stat difference!!
+        *tucker_coord_3d and tucker_coord_4d, tucker_c+v_4D, tucker_c+v_5D: p=0.035, 0.033, 0.025, stat=-2.184] -  Slight stat difference!!
+        Others - No stat difference 
+
+    ntu:
+        coord_3d and tucker_coord_3d: False [p=0.465, stat=-0.737] - No stat difference
+        coord_3d and tucker_coord_4d: False [p=0.100, stat=-1.683] - No stat difference
+        *coord_3d and tucker_c+v_4D: True [p=0.036, stat=-2.172] - Slight stat difference!!
+        *coord_3d and tucker_c+v_5D: True [p=0.021, stat=-2.398] - Slight stat difference!!
+        Others - No stat difference 
+
+** p < 0.005 - good stat differences with corrections
+* p < 0.05 - good stat differences with corrections
+
+coord - coordinates
+c+v - coordinates and velocities (speed) 
+
+
+Conclusion:
+1) tucker is better then origin for Random Forest
+2) tucker 4d can be better then tucker 3d but not always
+3) tucker_4d,  tucker_c+v_4D, and  tucker_c+v_5D - are pretty the same 
+
+
+
+ntu and smpl - without missing data
+
+ffill better for origin data? 
+Sometimes
+
+
+
+Tucker 3D for full tensor and for only 2 elements of the tensor - are different 
+The difference is about 21%-25% of the norm of tucker_tensor [(tucker_tensor**2).sum()**0.5]
+(Tested on data_tensor[0:2, :, :] and  data_tensor[50:100, :, :])

@@ -1,29 +1,77 @@
 Tasks:
 
-1.1) Test different tensor libs and different tensor decompositions
-libs: tntorch, "TensorD" and Tensortools (Tomar) 
-slitly
+#1.1) Test different tensor libs and different tensor decompositions
+libs: tntorch, "TensorD" and Tensortools (Tomar) - slightly difference
 tntorch - not principle differences, but tensorly is slightly better on CV
-1.2) Test PSA instead of SVD. Maybe update tacker decompositions - looks like, simple mean subtracting do
+#1.2) Test PSA instead of SVD. Maybe update tacker decompositions - looks like, simple mean subtracting do
 
-2) ask Prof.Phan about his decompotions base on stability and test them
+2) ask Prof.Phan about his decompositions base on stability and test them - work for cpd? not
+So, I can try to use CPD...
 
 
-3) Test other fill.na methods. Interpolation, previouse values - processing
+#3) Test other fill.na methods. Interpolation, previous values
+Interpolation - is not realistic, previous - sometimes better, sometimes worse
 
 
 * test other representations
-4) Test 4D tensor (samples, time, joints, coordinates), 5D?
+#4) Test 4D tensor (samples, time, joints, coordinates), 5D?
+4D - can be better, e.g. RT: close to p=0.05, but still not stat significant
+Tucker decomposition can can realign the sequence of the dimensions. [XVxYVy] -> [ABCD]  or  [XYVxVy] -> [ABCD]
+#5) Speed, speed and coordinates
+For one hand gestures
+Only speed (S): LogReg+Tucker~85%, RF+Tucker~95-96%, without Tucker - much worse (LogReg: 67%, RF: 71-72%)
+Speed + coordinates (S+C): LogReg+tucker4d(5d)~94%, RF+tucker4d(5d)~98.-98.8%, without Tucker -  worse (LogReg: 88%, RF: 78%)
+S+C - better, then C, only S wore then c
+^^^ #4 and #5 ^^^
+For mpipe: the main difference between tucker and without Tucker, 3D, 4D, 5D - not a big difference
+For smpl: the difference between origin and tucker+4D+c_v (3D Tucker is pretty the same as origin)
+For ntu: the differences are low and not stat significant
+Conclusion: 4D+c_v - an optimal variant 
 
-5) Speed, speed and coordinates
+
 6) Normalize the x, y, z, coordinates
-7) Using Normalized coordinates (angels)
-8) Other representaion (fisher vecrot, Discrete)
+7) Using Normalized coordinates (angles)
+- angles
+- pairwise distance between joints (Normalized) ?
+- 
 
-9) Pure tensor methods 
+8) Other representation (fisher vector, Discrete)
+8.1 try to include convolutions
+
+
+
+
+#9) test time alignment! The assumption did not proved! (S - start, E - end, SE - start and End : alignments)
+- In our case start alignment is similar to without alignment, especially fro RF_tucker (non sign difference)
+- start and stop alignment improves the accuracy (LR and RF) 
+- for LR:  S and E worse, SE - better
+- for RF: - better, e - worse, SE - better
+- SE increase LR and RF
+- Tucker is robust to alignment - False!
+- LR works good with and without Tucker. Tucker improves slightly (or even can be worse)
+- RF with Tucker works much better then simple RF
+- for hard augmentation: LR is slightly better (RF decreases more), but Tucker + RF + aug_h is better (the similar) as RF without aug_h!
+- aug or aug_h + LG or RF ---> big decrease;
+
+
+11) Try X + iY and complex decomposition 
+ T-SNE in Python to Visualize!
+
+10) Pure tensor methods 
+
+
+11) do online recognition:
+    a) lab way
+    a.1 - test Hankelization! 
+    b) on PC, in-field way
+    c) Jetson Nano, Xavier way 
 
 Necessary auxiliary tasks:
 a) unified pipeline and name data rules - done?
 b) 
+
+
+
+
 
 

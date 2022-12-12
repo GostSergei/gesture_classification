@@ -14,7 +14,7 @@ from modules.ml_auxiliary import *
 
 
 
-def select_valid_samplels(ds_dict):
+def select_valid_samples(ds_dict):
     data_dict = copy.deepcopy(ds_dict)
     len_ds = len(ds_dict.keys())
     for g_id in ds_dict.keys():
@@ -24,7 +24,7 @@ def select_valid_samplels(ds_dict):
       
     len_ds = len(ds_dict.keys())      
     len_data = len(data_dict.keys())
-    print(f"{len_ds - len_data} samples was unvalied. Ramain {len_data}({len_ds})") 
+    print(f"{len_ds - len_data} samples was unvalid. Remain {len_data}({len_ds})") 
             
     return data_dict
 
@@ -64,6 +64,8 @@ def form_important_points(df_skeleton, coords=['x', 'y', 'z'], pose_points='def'
     coords = ''.join(coords)
     if pose_points == 'def':
         pose_points = [i for i in range(25)]
+    elif pose_points == 'all':
+        pose_points = [i for i in range(33)]
         
     if hand_points == 'def':
         hand_points = [i for i in range(21)]
@@ -140,6 +142,38 @@ def update_df_crop_time(df, max_time=120):
 
 
 
+def _speed_renaming_fun_(col):
+    
+    # try on int
+    try:
+        col = int(col)
+    except:
+        col = col
+    
+    if isinstance(col, str):
+        new_col = col[:-1]+'V'+col[-1]
+    elif isinstance(col, int):
+        new_col = 'V'+str(col)
+    return new_col
+            
+def update_df_to_speed(df):
+    df = df.diff(1, axis=0)
+    delta = df.isna().sum()
+    df = df.dropna().reset_index(drop=True)
+    df = df.rename(columns=_speed_renaming_fun_)  # renaming
+    return df, delta
+
+def update_df_to_coord_and_speed(df):
+    df_s = df.copy()
+    df_s, delta = update_df_to_speed(df_s)
+    df = df.drop(index=[0]).reset_index(drop=True)
+    df = pd.concat([df, df_s], axis=1)
+    return df, delta
+
+
+
+
+
 
 def get_class_name_from_g_id(g_id):
     sep = '__'
@@ -152,14 +186,24 @@ CLASS_NAME_KEY = 'class_name'
 CLASS_LABEL_KEY = 'class_label'
 
 
-def form_gesture_labels(data_dict):
-    name_label_dict = {}
-    current_label = 0
+def form_gesture_labels(data_dict, label_dict=None):
+    
+    if label_dict is None:    
+        name_label_dict = {}
+        current_label = 0
+    else:
+        # switching keys and values
+        name_label_dict = {y: x for x, y in label_dict.items()}  
+        current_label = np.asarray(list(label_dict.keys())).max()+1
+        
+    
     for g_id in data_dict.keys():
         class_name = get_class_name_from_g_id(g_id)
         if class_name not in name_label_dict.keys():
             name_label_dict[class_name] = current_label
             current_label += 1
+            if label_dict is not None:
+                print(f'Warning, label number {current_label} was additionally added to label_dict!')
                    
         data_dict[g_id][CLASS_NAME_KEY] = class_name
         data_dict[g_id][CLASS_LABEL_KEY] = name_label_dict[class_name]

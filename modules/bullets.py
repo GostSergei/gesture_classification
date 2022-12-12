@@ -102,6 +102,24 @@ def ffill_nans(data_3D, table_axis=0, remain_nan_value=0):
         data[i] = df.to_numpy()
     return data
 
+def update_3D_data(data_3D, update_df_func, kwargs={}, verbose=1):
+    data = data_3D
+    old_shape = data.shape
+    delta_list = []
+    tensor_list = []
+    for i in range(data.shape[0]):
+        df = pd.DataFrame(data[i])
+        df, delta = update_df_func(df, **kwargs)
+        tensor_list += [np.expand_dims(df.to_numpy(), 0)]
+        # data[i] = df.to_numpy()
+        delta_list += [delta]
+    data = np.concatenate(tensor_list, axis=0)
+    
+    if verbose > 0:
+        print(f"For data {old_shape} -> {data.shape}, sum of delta = {np.asarray(delta_list).sum()}")
+    return data
+
+
     
 def load_json(src):
     with open(src, 'r') as f:

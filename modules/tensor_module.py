@@ -49,7 +49,7 @@ def get_tucker_tensors_tn(data_tensor, data_tensor_test, rank=-1, verbose=2):
         
     modes = [i for i in range(len(data_tensor.shape))]
     modes = modes[1:]
-    t_tucker = tn.Tensor(torch.Tensor(t), ranks_tucker=rank)
+    t_tucker = tn.Tensor(torch.from_numpy(t), ranks_tucker=rank)
     # print(tn.relative_error(torch.Tensor(t), t_tucker))
     core_tucker = t_tucker.tucker_core().numpy()
     factors_tucker = [U.numpy() for U in t_tucker.Us]

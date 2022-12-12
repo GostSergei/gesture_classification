@@ -304,8 +304,12 @@ class KNN(ModelAbstract):
 class STMM(ModelAbstract):
     def reshape_X_tensor(self, X_tensor):
         print('STM reshape')
-        if len(X_tensor.shape) < 3:
-            X_tensor = X_tensor.reshape(list(X_tensor.shape) + [-1]) 
+        # if len(X_tensor.shape) < 3:
+        #     X_tensor = X_tensor.reshape(list(X_tensor.shape) + [-1])
+        if len(X_tensor.shape) != 3:
+            print(f'Warning, tensor:{X_tensor.shape} will be reshped to 3D:', end='') 
+            X_tensor = X_tensor.reshape(X_tensor.shape[:2] + (-1,))
+            print(f'{X_tensor.shape}!')
         return X_tensor
     
     def gen_default_params(self):

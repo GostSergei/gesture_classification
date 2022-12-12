@@ -23,7 +23,7 @@ from modules.bullets import load_data, ask_confirmation, decorator_script_wrap
 
    
 @decorator_script_wrap
-def tucker_decomposition(src, dst, rank=-1, get_tucker_tensors_fun=get_tucker_tensors):
+def tucker_decomposition(src, dst, rank=-1, get_tucker_tensors_fun=get_tucker_tensors_tn):
     # print(f'Tucker_decomposition of {src}')
     data = load_data(src)
     data_tensor, data_tensor_test = data['x_train'], data['x_test']
@@ -56,8 +56,7 @@ def main():
                         help="For example rank='[120, 140]' or rank = '120' (equals to [120, 120])"\
                                 ", default: -1(maximum rank)")
     parser.add_argument('-l', '--lib_version',  default=1,
-                        help="For example rank='[120, 140]' or rank = '120' (equals to [120, 120])"\
-                                ", default: -1(maximum rank)\n lib_versions: 1:tntorch, 2:tensorly")
+                        help="lib_versions: 1:tntorch (default), 2:tensorly")
     arg = parser.parse_args()
     script_name = pathlib.Path(__file__).name
     
@@ -66,7 +65,7 @@ def main():
     elif arg.lib_version == 1: 
         get_tucker_tensors_fun = get_tucker_tensors_tn
     else:
-        print(f'Error! lib_version={arg.lib_version} is not appropriated! Good are 1, 2.')
+        print(f'Error! lib_version={arg.lib_version} is not appropriated! Good are [1, 2].')
         exit(1)
     
     print(f"Start {script_name}:")

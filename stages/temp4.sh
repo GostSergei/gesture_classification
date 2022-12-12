@@ -14,7 +14,10 @@
 # nohup bash_scripts/cv_work-pca-smpl.sh   >  cv_work-pca-smpl.txt   2>&1 &
 
 
-nohup bash_scripts/cv_work-tucker-mpipe.sh  >  cv_work-tucker-mpipe.txt  2>&1 &
-nohup bash_scripts/cv_work-tucker-ntu.sh   >  cv_work-tucker-ntu.txt    2>&1 &
-nohup bash_scripts/cv_work-tucker-smpl.sh   >  cv_work-tucker-smpl.txt   2>&1 &
+# nohup bash_scripts/cv_work-tucker-mpipe.sh  >  cv_work-tucker-mpipe.txt  2>&1 &
+# nohup bash_scripts/cv_work-tucker-ntu.sh   >  cv_work-tucker-ntu.txt    2>&1 &
+# nohup bash_scripts/cv_work-tucker-smpl.sh   >  cv_work-tucker-smpl.txt   2>&1 &
 
+nohup transformation_scripts/transform_tucker_5D-mpipe.sh  >  tucker_tn_5D-mpipe.txt  2>&1 &
+nohup transformation_scripts/transform_tucker_5D-ntu.sh    >  tucker_tn_5D-ntu.txt    2>&1 &
+nohup transformation_scripts/transform_tucker_5D-smpl.sh   >  tucker_tn_5D-smpl.txt   2>&1 &

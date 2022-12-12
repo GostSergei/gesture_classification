@@ -79,6 +79,7 @@ def compare_train_test_confusion_matrices(y_train, label_train, y_test, label_te
     plot_confusion_matrix(y_test, label_test, label_dict, ax=ax_test)
     acc_test = accuracy_score(y_test, label_test)
     ax_test.set_title(f"Test: {acc_test :0.4}")
+    return acc_test
     
     
 def check_KNN(X_train, y_train, X_test, y_test, model_name,  n_start=1, n_end=20):
@@ -118,6 +119,8 @@ def test_accuracy(model_pair, tensor, tensor_test, labels_list, labels_list_test
         label_test = model.predict(X_test)
         acc_test = accuracy_score(y_test, label_test)
         acc_list += [acc_test]
+        if verbose > 1:
+            print(f"For {model_name} and i={i}: {acc_test*100:.2f}%")
         
     acc_arr = np.array(acc_list)
     if verbose > 0:
@@ -129,12 +132,18 @@ def test_accuracy(model_pair, tensor, tensor_test, labels_list, labels_list_test
     
 
 
-def check_model(model, model_name, X_train, X_test, y_train, y_test, exp_cofig, label_dict):
+def check_model(model, model_name, X_train, X_test, y_train, y_test,  exp_cofig='', label_dict=None, show_conf_matrices=True):
+    assert label_dict is not None, "Error, you should input 'label_dict'!"
     label_train = model.predict(X_train)
     label_test = model.predict(X_test)
-    compare_train_test_confusion_matrices(y_train, label_train, y_test, label_test, label_dict)
-    plt.gcf().suptitle( model_name+ ": "+ exp_cofig)
-    print()
+    acc_test = accuracy_score(y_test, label_test)
+    if show_conf_matrices:
+        compare_train_test_confusion_matrices(y_train, label_train, y_test, label_test, label_dict)
+        plt.gcf().suptitle( model_name+ ": "+ exp_cofig)
+    print(f"Test accuracy for {model_name}:", f"{acc_test*100 :.2f}%", f"\t[{exp_cofig}]")
+    return acc_test
+
+
     
     
 def _model_is_fitted_(model):
