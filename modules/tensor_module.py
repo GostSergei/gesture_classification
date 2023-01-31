@@ -38,8 +38,8 @@ def get_tucker_tensors(data_tensor, data_tensor_test, rank=-1, n_iter_max=1000, 
     return tensor_tucker, tensor_tucker_test
 
 def get_tucker_tensors_tn(data_tensor, data_tensor_test, rank=-1, verbose=2):
-    t = data_tensor
-    tt = data_tensor_test
+    t = data_tensor # train tensor 
+    tt = data_tensor_test # test tensor 
     
     if rank is None or rank == -1:
         rank = data_tensor.shape

@@ -214,13 +214,25 @@ def form_gesture_labels(data_dict, label_dict=None):
     return data_dict, label_dict
 
 
-def form_samples_labels_lists(data_dict):
+def form_samples_labels_lists(data_dict, return_subjects=False ):
     samples_list,  labels_list = [], []
+    if return_subjects:
+        subject_list = []
     for g_id in data_dict.keys():
         labels_list += [data_dict[g_id][CLASS_LABEL_KEY]]
         data = data_dict[g_id][SKELETON_KEY].to_numpy()
         samples_list += [np.expand_dims(data, 0)]
-    return samples_list,  labels_list
+        if return_subjects:
+            subject =  get_sub_from_g_id(g_id)
+            subject_list +=[subject]
+        
+        
+    out = (samples_list,  labels_list)
+    if return_subjects:
+        out = (samples_list,  labels_list, subject_list)
+    return out
+
+
 
 
 def form_samples_labels_se_lists(data_dict):
